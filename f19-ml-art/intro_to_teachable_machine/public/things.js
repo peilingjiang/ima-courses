@@ -11,21 +11,22 @@ let bad_food = {
 }
 
 function loadimg() {
-    egg = loadImage('assets/egg.png');
-    orange = loadImage('assets/orange.png');
-    bread = loadImage('assets/bread.png');
-    tomato = loadImage('assets/tomato.png');
-    fish = loadImage('assets/fish.png');
-    apple = loadImage('assets/apple.png');
+    const eggImg = loadImage('assets/egg.png');
+    const orangeImg = loadImage('assets/orange.png');
+    const breadImg = loadImage('assets/bread.png');
+    const tomatoImg = loadImage('assets/tomato.png');
+    const fishImg = loadImage('assets/fish.png');
+    const appleImg = loadImage('assets/apple.png');
 
-    burger = loadImage('assets/burger.png');
-    fries = loadImage('assets/fries.png');
-    rice = loadImage('assets/rice.png');
-    chicken = loadImage('assets/chicken.png');
-    potato = loadImage('assets/potato.png');
-    hotpot = loadImage('assets/hotpot.png');
+    const burgerImg = loadImage('assets/burger.png');
+    const friesImg = loadImage('assets/fries.png');
+    const riceImg = loadImage('assets/rice.png');
+    const chickenImg = loadImage('assets/chicken.png');
+    const potatoImg = loadImage('assets/potato.png');
+    const hotpotImg = loadImage('assets/hotpot.png');
 
-    bomb = loadImage('assets/bomb.png');
+    const bombImg = loadImage('assets/bomb.png');
 
     console.log('Photos successfully preloaded.')
 }
+
