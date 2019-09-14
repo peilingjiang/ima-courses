@@ -3,7 +3,9 @@ Based on ml5 Example: Webcam Image Classification using MobileNet and p5.js.
 
 Peiling Jiang 2019
 
-Thanks to Daniel Shiffman.
+#Peiling's first p5.js project.
+
+Thanks to Daniel Shiffman and Youtube.
 */
 
 /*
@@ -15,6 +17,8 @@ Center and Close - 3
 Center and Open  - 4
 Right and Close  - 1
 Right and Open   - 2 Video flipped with no reason!
+
+a p5.js problem worth looking into!
 */
 
 let classifier;
@@ -29,22 +33,30 @@ let mouthOpen = false;
 let position = 0; // Left - 1, Center - 2, Right - 3, Not in - 0
 let timeLeft = 100;
 
+// debug
+// position and mouthOpening identifier
 let labelIdentifier = true;
+// eating area identifier
+let eatingAreaIdentifier = true;
 
-let labelBgColor; let c;
+let mainColor;
+let labelBgColor;
+let c;
+let areaColor;
 
 function preload() {
   video = createCapture(VIDEO);
   video.size(640, 480);
   video.hide();
-  classifier = ml5.imageClassifier(imageModel); 
-  loadimg();
+  classifier = ml5.imageClassifier(imageModel);
+  loadimg(); // load all image and build all lists
 }
 
 function setup() {
+  mainColor = color('#ed0cef');
   var cnv = createCanvas(640, 480);
   cnv.style('display', 'block');
-  background(255);
+  background(mainColor);
   // resultsP = createP('Waiting...');
   classifyVideo();
 
@@ -52,20 +64,38 @@ function setup() {
 
 }
 
+let game = false; // boolean define whether in game or not
+
 function draw() {
 
-  push();
-  // Move image by the width of image to the left
-  translate(video.width, 0);
-  // Then scale it by -1 in the x-axis
-  // to flip the image
-  scale(-1, 1);
-  image(video, 0, 0);
-  pop();
 
-  // Run the game 1 second by 1 second
-  timestep();
+  if (game == false) {
+    background(mainColor);
 
+  } else {
+
+    push();
+    // Move image by the width of image to the left
+    translate(video.width, 0);
+    // Then scale it by -1 in the x-axis
+    // to flip the image
+    scale(-1, 1);
+    image(video, 0, 0);
+    pop();
+
+    // draw helper rect of eating area
+    drawEatingArea();
+
+    // Run the game 1 second by 1 second
+    timestep();
+  }
+
+}
+
+function keyPressed() {
+  if (keyCode == 69) { // KeyCode of key E/e is 69
+    game = true;
+  }
 }
 
 // Get a prediction for the current video frame
@@ -75,7 +105,7 @@ function classifyVideo() {
 
 // When we get a result
 function gotResult(error, results) {
-  console.log(results[0]);
+  // console.log(results[0]);
   // The results are in an array ordered by confidence.
   // resultsP.html(results[0].label);
   label = results[0].label;
@@ -107,7 +137,7 @@ function drawIdentifier() {
         ellipse(46, height - 16, 18, 18);
       }
       pop();
-    } 
+    }
   } else {
 
   }
@@ -115,8 +145,21 @@ function drawIdentifier() {
 
 function labelColor() {
   if (mouthOpen) {
-    return '#fb0091';
+    return '#ed0cef';
   } else if (!mouthOpen) {
-    return '#537d91';
+    return '#8105d8';
+  }
+}
+
+function drawEatingArea() {
+  if (eatingAreaIdentifier == true) {
+    push();
+    areaColor = color('#ed0cef');
+    areaColor.setAlpha(32);
+    fill(areaColor);
+    noStroke();
+    rectMode(CENTER);
+    rect(width / 2, height / 2, width, eatingAreaH);
+    pop();
   }
 }
