@@ -18,7 +18,6 @@ Center and Open  - 4
 Right and Close  - 1
 Right and Open   - 2 Video flipped with no reason!
 
-a p5.js problem worth looking into!
 */
 
 let classifier;
@@ -31,7 +30,7 @@ let imageModel = 'https://storage.googleapis.com/tm-mobilenet/applejpl2/model.js
 let weight = 160;
 let mouthOpen = false;
 let position = 0; // Left - 1, Center - 2, Right - 3, Not in - 0
-let timeLeft = 100;
+let timeLeft = 300;
 
 // debug
 // position and mouthOpening identifier
@@ -54,34 +53,64 @@ function preload() {
 
 function setup() {
   mainColor = color('#ed0cef');
-  var cnv = createCanvas(640, 480);
-  cnv.style('display', 'block');
+  warningColor = color(199, 13, 58); // for bomb warning
+
+  createCanvas(640, 480);
+
   background(mainColor);
   // resultsP = createP('Waiting...');
   classifyVideo();
 
   labelBgColor = color(255, 255, 255);
-
 }
 
 let game = false; // boolean define whether in game or not
+let played = false;
+
+function drawVideo() {
+  push();
+  // Move image by the width of image to the left
+  translate(video.width, 0);
+  // Then scale it by -1 in the x-axis
+  // to flip the image
+  scale(-1, 1);
+  image(video, 0, 0);
+  pop();
+}
 
 function draw() {
 
-
-  if (game == false) {
+  if (!game && !played) {
     background(mainColor);
 
-  } else {
-
+  } else if (!game && played && !haveWon) {
+    // played and failed
+    drawVideo();
+    timestep();
     push();
-    // Move image by the width of image to the left
-    translate(video.width, 0);
-    // Then scale it by -1 in the x-axis
-    // to flip the image
-    scale(-1, 1);
-    image(video, 0, 0);
+    fill(0);
+    textSize(100);
+    textAlign(CENTER, CENTER);
+    text("GAME OVER", 0, height / 2, width);
     pop();
+
+  } else if (!game && played && haveWon) {
+    // played and Won
+    drawVideo();
+    timestep();
+    push();
+    fill(0);
+    textSize(100);
+    textAlign(CENTER, CENTER);
+    text("aPPle!", 0, height / 2, width);
+    pop();
+
+  } else {
+    // game and played
+
+    // GAME START
+
+    drawVideo();
 
     // draw helper rect of eating area
     drawEatingArea();
@@ -94,8 +123,19 @@ function draw() {
 
 function keyPressed() {
   if (keyCode == 69) { // KeyCode of key E/e is 69
+    console.log('Game started.');
     game = true;
+    played = true;
+    haveWon = false;
+    initVs();
   }
+}
+
+function initVs() {
+  weight = 160;
+  mouthOpen = false;
+  position = 0;
+  timeLeft = 300;
 }
 
 // Get a prediction for the current video frame
@@ -110,56 +150,4 @@ function gotResult(error, results) {
   // resultsP.html(results[0].label);
   label = results[0].label;
   classifyVideo();
-}
-
-function drawIdentifier() {
-  if (labelIdentifier === true) {
-    push();
-    noStroke();
-    labelBgColor.setAlpha(128);
-    fill(labelBgColor);
-    rect(16, height - 26, 40, 20, 10);
-    pop();
-
-    // Change identifier location
-    if (position !== 0) {
-      push();
-      noStroke();
-      fill(color(labelColor()));
-      if (position == 1) {
-        // Left
-        ellipse(26, height - 16, 18, 18);
-      } else if (position == 2) {
-        // Center
-        ellipse(36, height - 16, 18, 18);
-      } else if (position == 3) {
-        // Right
-        ellipse(46, height - 16, 18, 18);
-      }
-      pop();
-    }
-  } else {
-
-  }
-}
-
-function labelColor() {
-  if (mouthOpen) {
-    return '#ed0cef';
-  } else if (!mouthOpen) {
-    return '#8105d8';
-  }
-}
-
-function drawEatingArea() {
-  if (eatingAreaIdentifier == true) {
-    push();
-    areaColor = color('#ed0cef');
-    areaColor.setAlpha(32);
-    fill(areaColor);
-    noStroke();
-    rectMode(CENTER);
-    rect(width / 2, height / 2, width, eatingAreaH);
-    pop();
-  }
 }
