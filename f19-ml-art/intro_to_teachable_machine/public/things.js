@@ -1,14 +1,9 @@
-// import {
-//     SSL_OP_NO_QUERY_MTU
-// } from "constants";
-
-// import {
-//     randomBytes
-// } from "crypto";
+// Sound tracks partially from https://github.com/arnofaure/free-sfx.
+// Food and Bomb icons from https://emojipedia.org/. Microsoft emoji library.
 
 // things image width and height
-const imgW = 64;
-const imgH = 64;
+const imgW = 67;
+const imgH = 67;
 // speed(s)
 const speed_list = [5.2, 6.17, 6.3];
 
@@ -44,8 +39,8 @@ let bad_food = {
 let good_dict, bad_dict;
 
 let explosionColor;
-let warningColor;
 
+// CHANGE POSSIBILITY OF DIFFERENT FOOD AND BOMB HERE
 function buildLists() { // Run 1 time
     // build good list with ratio 4:3:1
     for (let i in good_food) {
@@ -77,12 +72,16 @@ function buildLists() { // Run 1 time
         }
     }
 
-    // buid bomb list with 1/9 possibility of bombing
-    for (i = 0; i < 8; i++) {
+    // buid bomb list with 1/12 possibility of bombing
+    for (i = 0; i < 11; i++) {
         bomb_list.push(false);
     }
     bomb_list.push(true);
 }
+
+let bomb_warning;
+let tIcon, wIcon;
+let end_winImg, end_overImg;
 
 function loadimg() {
     // All functions here run 1 time
@@ -101,8 +100,15 @@ function loadimg() {
     const hotpotImg = loadImage('assets/hotpot.png');
 
     const bombImg = loadImage('assets/bomb.png');
+    bomb_warning = loadImage('assets/bomb_warning.png');
+
+    tIcon = loadImage('assets/t.png');
+    wIcon = loadImage('assets/w.png');
+    end_winImg = loadImage('assets/end_win.png');
+    end_overImg = loadImage('assets/end_over.png');
 
     console.log('Photos successfully preloaded.');
+
     buildLists();
 
     thing_dict = {
@@ -122,6 +128,22 @@ function loadimg() {
     }
 
     console.log('Lists (or Array) successfully built.');
+}
+
+let introSound, bgSound;
+let shootSound, bombShootSound, eatGoodSound, eatBadSound, explosionSound, winSound, overSound;
+
+function loadsound() {
+    introSound = loadSound('assets/intro.mp3');
+    shootSound = loadSound('assets/shoot.mp3');
+    eatGoodSound = loadSound('assets/good.mp3');
+    eatBadSound = loadSound('assets/bad.mp3');
+    bombShootSound = loadSound('assets/bomb_warning.wav');
+    explosionSound = loadSound('assets/boom.wav');
+    winSound = loadSound('assets/congrats.mp3');
+    overSound = loadSound('assets/over.wav');
+
+    console.log('Sounds successfully preloaded.');
 }
 
 function startlocX() {
@@ -211,7 +233,7 @@ function boostShoot() {
 
 class Thing { // start with a string
     constructor(thingStr, b = false) {
-        // thingImg is eggImg, etc.
+        shootSound.play();
         this.booster = b;
         this.t = 0;
         this.start = [startlocX(), startlocY()]; // const for an object
@@ -332,6 +354,7 @@ class Thing { // start with a string
 
 class Bomb {
     constructor() {
+        bombShootSound.play();
         this.t = 0;
         this.start = [startlocX(), startlocY()]; // const for an object
         this.x = this.start[0];
@@ -352,6 +375,7 @@ class Bomb {
 
         this.bombed = false;
         this.bombedTime = 0;
+        this.boomSounded = false; // not played the sound
 
     }
 
@@ -363,6 +387,11 @@ class Bomb {
         }
 
         if (this.t >= countdown && !haveWon) { // deactive bomb if won
+            if (!this.boomSounded) {
+                explosionSound.rate(1.25);
+                explosionSound.play();
+                this.boomSounded = true;
+            }
             this.bombed = true;
             this.bombedTime += 1;
         }
@@ -379,13 +408,11 @@ class Bomb {
         pop();
 
         push();
-        rectMode(CENTER);
-        noStroke();
-        warningColor.setAlpha(128 + 128 * sin(millis() / 100));
-        fill(warningColor);
+        imageMode(CENTER);
         translate(this.x, this.y);
         rotate(this.speed * this.t * 0.02);
-        rect(0, 0, this.width, this.height);
+        tint(255, 128 + 128 * sin(millis() / 100))
+        image(bomb_warning, 0, 0, this.width, this.height);
         pop();
     }
 

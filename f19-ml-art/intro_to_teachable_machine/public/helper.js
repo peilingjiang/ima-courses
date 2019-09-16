@@ -17,8 +17,8 @@ function drawIdentifier() {
     if (labelIdentifier === true) {
         push();
         noStroke();
-        labelBgColor.setAlpha(128);
-        fill(labelBgColor);
+        lightColor.setAlpha(127);
+        fill(lightColor);
         rect(16, height - 26, 40, 20, 10);
         pop();
 
@@ -46,17 +46,17 @@ function drawIdentifier() {
 
 function labelColor() {
     if (mouthOpen) {
-        return '#ed0cef';
+        return '#ff4893';
     } else if (!mouthOpen) {
-        return '#8105d8';
+        return '#666666';
     }
 }
 
 function drawEatingArea() {
     if (eatingAreaIdentifier == true) {
         push();
-        areaColor = color('#ed0cef');
-        areaColor.setAlpha(16);
+        areaColor = color('#ff4893');
+        areaColor.setAlpha(12);
         fill(areaColor);
         noStroke();
         rectMode(CENTER);

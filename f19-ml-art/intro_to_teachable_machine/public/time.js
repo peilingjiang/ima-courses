@@ -3,6 +3,8 @@ let haveEaten = false; // No need to update weight if not eat
 let haveWon = false;
 let toBoostShoot = false;
 
+let displayBoard_or_not = false;
+
 // bomb countdown
 let countdown = 100; // less than 2s
 
@@ -33,6 +35,7 @@ function timestep() {
         // Check if have won
         if (weight === 0 && timeLeft >= 0) {
             // WON! aPPle!
+            winSound.play();
             haveWon = true;
             game = false;
         }
@@ -44,6 +47,7 @@ function timestep() {
     // DISPLAY ALL
     displayDisappearThings();
     displayThings();
+    displayBoard(); // make top pink
     displayTimeLeft();
     displayWeight();
 }
@@ -53,6 +57,7 @@ function checkOver() {
         timeLeft = 0; // avoid negative number
     }
     if (timeLeft <= 0) {
+        overSound.play();
         haveWon = false;
         game = false;
     }
@@ -190,14 +195,6 @@ function displayThings() {
 
 }
 
-function displayTimeLeft() {
-    push();
-    fill(0);
-    textSize(20);
-    text(Math.round(timeLeft * 10) / 10, 20, 20);
-    pop();
-}
-
 function helper_edible(food) {
     // edible if in eating area
     if ((height - eatingAreaH) / 2 < food.getY() && food.getY() < (height + eatingAreaH) / 2) {
@@ -206,7 +203,6 @@ function helper_edible(food) {
         return false;
     }
 }
-
 
 let totalDeltaWeight = 0;
 let eatGap = 0;
@@ -219,6 +215,11 @@ function eat() {
                 if (helper_edible(onScreen[t]) && onScreen[t].getArea() === position && mouthOpen && !onScreen[t].getEaten()) {
                     onScreen[t].eatEaten();
                     totalDeltaWeight += onScreen[t].getDeltaWeight();
+                    if (onScreen[t].getName() in good_food) {
+                        eatGoodSound.play();
+                    } else if (onScreen[t].getName() in bad_food) {
+                        eatBadSound.play();
+                    }
                     if (onScreen[t].getName() == 'apple') {
                         toBoostShoot = true;
                         bShot -= 10;
@@ -246,10 +247,40 @@ function updateWeight() {
     }
 }
 
-function displayWeight() {
+function displayBoard() {
+    if (displayBoard_or_not) {
+        push();
+        fill(mainColor);
+        noStroke();
+        rect(0, 0, width, 40);
+        pop();
+    }
+}
+
+function displayTimeLeft() {
+    image(tIcon, 22, 28, 32, 32); // icon
     push();
-    fill(255);
-    textSize(20);
-    text("Goal: " + weight, 300, 20);
+    lightColor.setAlpha(255);
+    fill(lightColor);
+    noStroke();
+    // stroke(lightColor);
+    // strokeWeight(4);
+    textStyle(BOLD);
+    textFont('Avenir', 32);
+    textFont('Inconsolata', 32);
+    text(Math.round(timeLeft * 10) / 10, 60, 53); // text
+    pop();
+}
+
+function displayWeight() {
+    image(wIcon, 170, 28, 32, 32); // icon
+    push();
+    lightColor.setAlpha(255);
+    fill(lightColor);
+    noStroke();
+    textStyle(BOLD);
+    textFont('Avenir', 32);
+    textFont('Inconsolata', 32);
+    text(weight, 211, 53); // text
     pop();
 }

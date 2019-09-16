@@ -17,7 +17,12 @@ Center and Close - 3
 Center and Open  - 4
 Right and Close  - 1
 Right and Open   - 2 Video flipped with no reason!
+*/
 
+/*
+How to train a new model:
+escape - stay at left side - stay at center - stay at right side;
+close - open
 */
 
 let classifier;
@@ -39,9 +44,11 @@ let labelIdentifier = true;
 let eatingAreaIdentifier = true;
 
 let mainColor;
-let labelBgColor;
+let lightColor;
 let c;
 let areaColor;
+
+let intro_page;
 
 function preload() {
   video = createCapture(VIDEO);
@@ -49,19 +56,21 @@ function preload() {
   video.hide();
   classifier = ml5.imageClassifier(imageModel);
   loadimg(); // load all image and build all lists
+  loadsound();
+
+  intro_page = loadImage('assets/intro.png');
 }
 
 function setup() {
-  mainColor = color('#ed0cef');
-  warningColor = color(199, 13, 58); // for bomb warning
+  mainColor = color('#ff4893');
+  lightColor = color('#f8f8f8');
 
   createCanvas(640, 480);
 
   background(mainColor);
+  image(intro_page, 0, 0, width, height);
   // resultsP = createP('Waiting...');
   classifyVideo();
-
-  labelBgColor = color(255, 255, 255);
 }
 
 let game = false; // boolean define whether in game or not
@@ -81,32 +90,24 @@ function drawVideo() {
 function draw() {
 
   if (!game && !played) {
+
     background(mainColor);
+    image(intro_page, 0, 0, width, height);
 
   } else if (!game && played && !haveWon) {
     // played and failed
     drawVideo();
     timestep();
-    push();
-    fill(0);
-    textSize(100);
-    textAlign(CENTER, CENTER);
-    text("GAME OVER", 0, height / 2, width);
-    pop();
+    image(end_overImg, 0, 0, width, height);
 
   } else if (!game && played && haveWon) {
     // played and Won
     drawVideo();
     timestep();
-    push();
-    fill(0);
-    textSize(100);
-    textAlign(CENTER, CENTER);
-    text("aPPle!", 0, height / 2, width);
-    pop();
+    image(end_winImg, 0, 0, width, height);
 
   } else {
-    // game and played
+    // game and played(ing)
 
     // GAME START
 
@@ -128,10 +129,13 @@ function keyPressed() {
     played = true;
     haveWon = false;
     initVs();
+    // introSound.stop();
   }
 }
 
 function initVs() {
+  // initial variables
+  time = 0;
   weight = 160;
   mouthOpen = false;
   position = 0;
