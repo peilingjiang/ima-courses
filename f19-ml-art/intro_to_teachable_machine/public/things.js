@@ -134,7 +134,7 @@ let introSound, bgSound;
 let shootSound, bombShootSound, eatGoodSound, eatBadSound, explosionSound, winSound, overSound;
 
 function loadsound() {
-    introSound = loadSound('assets/intro.mp3');
+    // introSound = loadSound('assets/intro.mp3');
     shootSound = loadSound('assets/shoot.mp3');
     eatGoodSound = loadSound('assets/good.mp3');
     eatBadSound = loadSound('assets/bad.mp3');
