@@ -1,0 +1,22 @@
+{
+  "name": "ima-courses",
+  "version": "1.0.0",
+  "description": "ima courses",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/peilingjiang/ima-courses.git"
+  },
+  "author": "Peiling Jiang",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/peilingjiang/ima-courses/issues"
+  },
+  "homepage": "https://github.com/peilingjiang/ima-courses#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
