@@ -1,7 +1,9 @@
+let sensitivity = 12;
+
 function playViolin() {
   // All points discussed are on bow-hand side
   // Old
-  let old_v_shoulder = createVector(allPoints['rightShoulder'].getpX(), allPoints['rightShoulder'].getpY());
+  let old_v_shoulder = createVector(allPoints['rightShoulder'].getpX(), allPoints['rightShoulder'].getpY()); // vector
   let old_v_elbow = createVector(allPoints['rightElbow'].getpX(), allPoints['rightElbow'].getpY());
   let old_v_wrist = createVector(allPoints['rightWrist'].getpX(), allPoints['rightWrist'].getpY());
   let old_e_to_s = old_v_shoulder.sub(old_v_elbow);
@@ -16,7 +18,9 @@ function playViolin() {
   let e_to_w = v_wrist.sub(v_elbow);
   let angle = degrees(e_to_s.angleBetween(e_to_w)).toFixed(2);
 
-  if (abs(angle - old_angle) > 12) {
+  if (abs(angle - old_angle) > sensitivity) {
+    let vel = abs(angle - old_angle); // spped
     console.log('playing...');
+    serial.write([true, vel]);
   }
 }
