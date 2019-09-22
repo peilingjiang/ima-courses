@@ -19,8 +19,15 @@ function playViolin() {
   let angle = degrees(e_to_s.angleBetween(e_to_w)).toFixed(2);
 
   if (abs(angle - old_angle) > sensitivity) {
-    let vel = abs(angle - old_angle); // spped
+    let vel = abs(angle - old_angle); // speed
+
+    let velToSend = map(vel, 10, 50, 100, 10);
+    velToSend = constrain(velToSend, 0, 255);
+
     console.log('playing...');
-    serial.write([true, vel]);
+
+    serial.write(velToSend);
+  } else {
+    serial.write(0);
   }
 }

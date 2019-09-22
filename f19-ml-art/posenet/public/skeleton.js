@@ -1,5 +1,5 @@
 // Set a tolerance value for the unmoved points
-let noiseDelta = 6;
+let noiseDelta = 8;
 let allPoints = {};
 
 class Point {

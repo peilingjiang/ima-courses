@@ -2,7 +2,7 @@
 // Based on ml5 example with p5.serialport using Binary Serial Data by Ellen Nickles
 //
 // Heather Kim and Peiling Jiang
-// 
+//
 // 2019
 
 let serial;
@@ -103,6 +103,7 @@ function draw() {
     playViolin();
   } else { // Not playing
     drawStandard(72);
+    serial.write(0);
   }
 
   drawKeypoints();
