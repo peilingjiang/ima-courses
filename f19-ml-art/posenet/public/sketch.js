@@ -143,7 +143,7 @@ function drawText() {
   textStyle(BOLD);
   textFont('Avenir', 32);
   textFont('Inconsolata', 32);
-  text('Playing...', 30, 30); // text
+  text('The violinist is prepared.', 32, 42); // text
   pop();
 }
 
