@@ -8,12 +8,63 @@ ml5 Example
 PoseNet example using p5.js
 === */
 
+let serial;
+
 let video;
 let poseNet;
 let poses = [];
 
+let img;
+let fr;
+
+let playPose; // having correct pose or not
+let playing; // is playing or not
+let vel; // the velocity of playing
+
+let keyParts = {
+  'nose': 0,
+  'leftShoulder': 5,
+  'rightShoulder': 6,
+  'leftElbow': 7,
+  'rightElbow': 8,
+  'leftWrist': 9,
+  'rightWrist': 10,
+  'leftHip': 11,
+  'rightHip': 12
+};
+
+let playPosePoints = {
+  'nose': [348, 155],
+  'leftShoulder': [250, 270],
+  'rightShoulder': [435, 275],
+  'leftElbow': [125, 360],
+  'rightElbow': [542, 370],
+  'leftWrist': [95, 240],
+  'rightWrist': [410, 360]
+}
+
+let displaySafeR = 25;
+let safeR = 50;
+
 function setup() {
   createCanvas(640, 480);
+
+  // Instantiate our SerialPort object
+  serial = new p5.SerialPort();
+  // List the ports available
+  serial.list();
+  // Fill in your serial port name here
+  serial.open("/dev/tty.usbmodem14301"); // <-- double-check this!
+
+  // Serial port callbacks
+  serial.on('connected', serverConnected);
+  serial.on('list', gotList);
+  serial.on('error', gotError);
+  serial.on('open', gotOpen);
+  serial.on('close', gotClose);
+
+  fr = 60;
+  frameRate(fr);
   video = createCapture(VIDEO);
   video.size(width, height);
 
@@ -30,47 +81,132 @@ function setup() {
 
 function modelReady() {
   console.log('model ready');
+  // Only initial points when model is ready
+  newPoints();
 }
 
 function draw() {
-  image(video, 0, 0, width, height);
 
-  // We can call both functions to draw all keypoints and the skeletons
+  // VIDEO
+  push();
+  // Move image by the width of image to the left
+  translate(video.width, 0);
+  // Then scale it by -1 in the x-axis
+  // to flip the image
+  scale(-1, 1);
+  image(video, 0, 0, width, height);
+  pop();
+
+  newPoints();
+  updateKeypoints();
+
+  if (is_playPose()) { // Start playing
+    drawText();
+    drawStandard(16);
+    playViolin();
+  } else { // Not playing
+    drawStandard(72);
+  }
+
   drawKeypoints();
-  drawSkeleton();
 }
 
 // A function to draw ellipses over the detected keypoints
-function drawKeypoints()  {
-  // Loop through all the poses detected
-  for (let i = 0; i < poses.length; i++) {
-    // For each pose detected, loop through all the keypoints
-    let pose = poses[i].pose;
-    for (let j = 0; j < pose.keypoints.length; j++) {
-      // A keypoint is an object describing a body part (like rightArm or leftShoulder)
-      let keypoint = pose.keypoints[j];
-      // Only draw an ellipse is the pose probability is bigger than 0.2
-      if (keypoint.score > 0.2) {
-        fill(255, 0, 0);
-        noStroke();
-        ellipse(keypoint.position.x, keypoint.position.y, 10, 10);
+function drawKeypoints() {
+  push();
+  noStroke();
+  fill(color('#ed5107'));
+  for (let i in allPoints) {
+    if (i in keyParts) {
+      // textSize(18);
+      // text(int(allPoints[i].getX()) + '  ' + int(allPoints[i].getY()), allPoints[i].getX() + 5, allPoints[i].getY() - 8);
+      ellipse(allPoints[i].getX(), allPoints[i].getY(), 16, 16);
+    }
+  }
+  pop();
+}
 
+function drawStandard(fillAlpha) {
+  push();
+  noStroke();
+  fill(255, 255, 255, fillAlpha);
+  for (let i in playPosePoints) {
+    ellipse(playPosePoints[i][0], playPosePoints[i][1], 2 * displaySafeR, 2 * displaySafeR);
+  }
+  pop();
+}
+
+function drawText() {
+  push();
+  fill(255);
+  noStroke();
+  textStyle(BOLD);
+  textFont('Avenir', 32);
+  textFont('Inconsolata', 32);
+  text('Playing...', 30, 30); // text
+  pop();
+}
+
+let offTime = 101; // Won't change playing status if pose only off for less than ~1 sec
+
+function is_playPose() {
+  let off;
+
+  if ('nose' in allPoints &&
+    'leftShoulder' in allPoints &&
+    'rightShoulder' in allPoints &&
+    'leftElbow' in allPoints &&
+    'leftWrist' in allPoints &&
+    'rightElbow' in allPoints) {
+      // LOOP
+    for (let i in allPoints) {
+      if (i in playPosePoints && dist(allPoints[i].getX(), allPoints[i].getY(), playPosePoints[i][0], playPosePoints[i][1]) > safeR) {
+        off = true;
+        break;
+      } else {
+        off = false;
       }
     }
+    // LOOP END
+    if (!off) {
+      offTime = 0;
+      return true;
+    } else if (off) {
+      if (offTime > 100) {
+        return false;
+      } else {
+        // Not off long enough
+        offTime += 1;
+        return true;
+      }
+    }
+  } else {
+    // Not all points detected
+    return false;
   }
 }
 
-// A function to draw the skeletons
-function drawSkeleton() {
-  // Loop through all the skeletons detected
-  for (let i = 0; i < poses.length; i++) {
-    let skeleton = poses[i].skeleton;
-    // For every skeleton, loop through all body connections
-    for (let j = 0; j < skeleton.length; j++) {
-      let partA = skeleton[j][0];
-      let partB = skeleton[j][1];
-      stroke(255, 0, 0);
-      line(partA.position.x, partA.position.y, partB.position.x, partB.position.y);
-    }
+///////////  Serial port functions ///////////
+
+function serverConnected() {
+  print("Connected to Server");
+}
+
+function gotList(thelist) {
+  print("List of Serial Ports:");
+  for (let i = 0; i < thelist.length; i++) {
+    print(i + " " + thelist[i]);
   }
+}
+
+function gotOpen() {
+  print("Serial Port is Open");
+}
+
+function gotClose() {
+  print("Serial Port is Closed");
+}
+
+function gotError(theerror) {
+  print(theerror);
 }

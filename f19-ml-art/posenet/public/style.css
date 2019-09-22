@@ -1,14 +1,11 @@
 html,
 body {
-  margin: 0;
-  padding: 0;
   height: 100%;
   font-family: 'Inconsolata', monospace;
 }
 
 body {
   margin: 0;
-  padding: 0;
   display: flex;
   /* This centers the sketch horizontally. */
   justify-content: center;
@@ -18,4 +15,5 @@ body {
 
 canvas {
   display: block;
+  border-radius: 5px;
 }
