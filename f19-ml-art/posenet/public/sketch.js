@@ -1,12 +1,9 @@
-// Copyright (c) 2018 ml5
+// Based on ml5 example of PoseNet example using p5.js by ml5js.org
+// Based on ml5 example with p5.serialport using Binary Serial Data by Ellen Nickles
 //
-// This software is released under the MIT License.
-// https://opensource.org/licenses/MIT
-
-/* ===
-ml5 Example
-PoseNet example using p5.js
-=== */
+// Heather Kim and Peiling Jiang
+// 
+// 2019
 
 let serial;
 
