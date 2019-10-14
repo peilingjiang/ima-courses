@@ -4,6 +4,8 @@ let trained = false;
 function mousePressed() {
     addButton.click();
     trainButton.click();
+    saveDataButton.click();
+    saveModelButton.click();
     emitClass[0].click();
     for (let i = 0; i < inputClass.length; i++) {
         inputClass[i].click();
@@ -23,12 +25,95 @@ function mouseDragged() {
     return false; // Prevent default
 }
 
+function saveData() {
+    brain_1.saveData('poses_data_for_color');
+    console.log('Brain 1 Data (Color) Saved');
+    brain_2.saveData('poses_data_for_emit');
+    console.log('Brain 2 Data (Emit) Saved');
+}
+
+function saveModel() {
+    brain_1.save();
+    console.log('Model 1 (Color) Saved');
+    brain_2.save();
+    console.log('Model 2 (Emit) Saved');
+}
+
+class SaveDataButton {
+    constructor() {
+        this.w = 90;
+        this.h = 32;
+        this.x = (width + videoWidth) / 2 - 90 - 8 - 2 * this.w - 16;
+        this.y = (height - videoHeight) / 2 + 8;
+        this.name = 'SaveDataButton';
+        // this.clicked = false;
+    }
+
+    show() {
+        push();
+        if (inputClass.length > 0) {
+            fill(71, 228, 187, 235);
+        } else {
+            fill(225);
+        }
+        rect(this.x, this.y, this.w, this.h);
+        fill(255);
+        textFont('Inconsolata', 22);
+        textStyle(BOLD);
+        text('↓data', this.x + 17.5, this.y + 22.5);
+        pop();
+    }
+
+    click() {
+        if (inputClass.length > 0 &&
+            this.x <= mouseX && mouseX <= this.x + this.w && this.y <= mouseY && mouseY <= this.y + this.h) {
+            // this.clicked = true;
+            saveData();
+        }
+    }
+}
+
+class SaveModelButton {
+    constructor() {
+        this.w = 90;
+        this.h = 32;
+        this.x = (width + videoWidth) / 2 - 90 - 8 - this.w - 8;
+        this.y = (height - videoHeight) / 2 + 8;
+        this.name = 'SaveModelButton';
+        // this.clicked = false;
+    }
+
+    show() {
+        push();
+        if (trained) {
+            fill(71, 228, 187, 235);
+        } else {
+            fill(225);
+        }
+        rect(this.x, this.y, this.w, this.h);
+        fill(255);
+        textFont('Inconsolata', 22);
+        textStyle(BOLD);
+        text('↓model', this.x + 12.5, this.y + 22.5);
+        pop();
+    }
+
+    click() {
+        if (inputClass.length > 0 && trained &&
+            this.x <= mouseX && mouseX <= this.x + this.w && this.y <= mouseY && mouseY <= this.y + this.h) {
+            // this.clicked = true;
+            saveModel();
+        }
+    }
+}
+
 class TrainButton {
     constructor() {
         this.x = (width + videoWidth) / 2 - 90 - 8;
         this.y = (height - videoHeight) / 2 + 8;
         this.w = 90;
         this.h = 32;
+        this.name = 'TrainButton';
         // this.selected = false;
         this.clicked = false; // Once clicked, cannot be clicked again
     }
@@ -71,6 +156,7 @@ class AddButton {
         this.center = [this.x + this.l / 2, this.y + this.l / 2];
         this.addable = true;
         this.clicked = false;
+        this.name = 'AddButton';
     }
 
     show() {
@@ -327,6 +413,9 @@ function draw_selection_area() {
     addButton.show();
     // Draw emit classes
     emitClass[0].show();
+    // Draw downloads
+    saveDataButton.show();
+    saveModelButton.show();
     // Draw input classes
     for (let i = 0; i < inputClass.length; i++) {
         if (!inputClass[i].selected) {
@@ -345,10 +434,7 @@ function draw_selection_area() {
 
 function update_cursor() {
     let pointer = false;
-    if (trainButton.x <= mouseX && mouseX <= trainButton.x + trainButton.w && trainButton.y <= mouseY && mouseY <= trainButton.y + trainButton.h) {
-        pointer = true;
-    }
-    if (cursor_over(addButton)) {
+    if (cursor_over(addButton) || cursor_over_wh(trainButton) || cursor_over_wh(saveDataButton) || cursor_over_wh(saveModelButton)) {
         pointer = true;
     }
     for (let i = 0; i < emitClass.length; i++) {
@@ -370,6 +456,14 @@ function update_cursor() {
 
 function cursor_over(obj) {
     if (obj.x <= mouseX && mouseX <= obj.x + obj.l && obj.y <= mouseY && mouseY <= obj.y + obj.l) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function cursor_over_wh(obj) {
+    if (obj.x <= mouseX && mouseX <= obj.x + obj.w && obj.y <= mouseY && mouseY <= obj.y + obj.h) {
         return true;
     } else {
         return false;

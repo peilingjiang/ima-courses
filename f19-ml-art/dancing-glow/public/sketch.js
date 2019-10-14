@@ -26,6 +26,8 @@ let learnedBrain = 0;
 
 let addButton;
 let trainButton;
+let saveDataButton;
+let saveModelButton;
 
 // Display
 let bodyColor = [200, 200, 200];
@@ -40,7 +42,7 @@ let collecting = false;
 let selectedClassType = 'U';
 
 function setup() {
-    createCanvas(windowWidth, windowHeight);
+    const c = createCanvas(windowWidth, windowHeight);
     video = createCapture(VIDEO);
     video.size(videoWidth, videoHeight);
 
@@ -71,6 +73,9 @@ function setup() {
     trainButton = new TrainButton;
     emitClass.push(new EmitClass);
 
+    saveDataButton = new SaveDataButton;
+    saveModelButton = new SaveModelButton;
+
     // Create the model
     let options_1 = {
         inputs: 26,
@@ -89,7 +94,31 @@ function setup() {
     brain_1 = ml5.neuralNetwork(options_1);
     // The categorization model
     brain_2 = ml5.neuralNetwork(options_2);
+
+    c.drop(gotFile);
 }
+
+function gotFile(file) {
+    if (file.subtype === "json") {
+        const dataFile = loadJSON(file.data);
+        if (file.name == "poses_data_for_color.json") {
+            brain_1.loadData(file.data, dataLoaded);
+            // Add to interface
+            console.log(dataFile);
+            console.log(dataFile['data']);
+        } else if (file.name == "poses_data_for_emit.json") {
+            brain_2.loadData(file.data, dataLoaded);
+        } else {
+            console.log('File Name Error');
+        }
+    } else {
+        console.log('File Type Error');
+    }
+}
+
+function dataLoaded() {
+    console.log('Data Loaded');
+  }
 
 // Train the model
 function trainModel() {
@@ -169,7 +198,7 @@ function gotResults_2(error, results) {
     } else if (results[0].label === 'Not Emit') {
         emitStatus = false;
     }
-    console.log(results);
+    // console.log(results);
     predict_2();
 }
 
@@ -246,13 +275,13 @@ function draw() {
         let pose = poses[0].pose;
 
         if (collecting && mouthStatus && !trained) {
-          // A color or emit class selected, and mouth is open for collecting data
-          if (selectedClassType === 'C') {
-              draw_glow(pose);
-              addExample_1();
-          } else if (selectedClassType === 'E') {
-              addExample_2();
-          }
+            // A color or emit class selected, and mouth is open for collecting data
+            if (selectedClassType === 'C') {
+                draw_glow(pose);
+                addExample_1();
+            } else if (selectedClassType === 'E') {
+                addExample_2();
+            }
         }
 
         if (trained && learnedBrain === 2) {
