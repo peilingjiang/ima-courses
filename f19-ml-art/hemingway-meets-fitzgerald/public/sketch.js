@@ -35,7 +35,8 @@ function setup() {
 }
 
 function modelReady() {
-  select('#status').html('Loaded ' + new Date().toLocaleString());
+  // select('#status').html('Loaded ' + new Date().toLocaleString());
+  select('#status').html('Model Loaded');
   modelIsReady = true;
 }
 

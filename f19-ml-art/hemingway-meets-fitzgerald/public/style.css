@@ -1,4 +1,5 @@
 body {
+  width: 80%;
   max-width: 800px;
   margin: auto;
   font-family: starling, serif;
@@ -18,7 +19,7 @@ input {
 }
 
 #textInput {
-  margin-left: 1rem;
+  /* margin-left: 1rem; */
   line-height: 100%;
   font-size: 150%;
   font-family: adelle, serif;
