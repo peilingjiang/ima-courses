@@ -26,18 +26,25 @@ input {
   width: auto;
 }
 
-textarea {
-  resize: none;
+#result_hf, #result_h, #result_f {
   font-size: 110%;
   font-family: rollerscript-smooth, sans-serif;
   margin: 0;
   margin-bottom: 0.2rem;
+  margin-left: 0.617rem;
   padding: 0;
+  padding-left: 1rem;
   border: 0;
   outline: 0;
   /* box-sizing: border-box; */
   width: 100%;
-  height: 110px;
+  min-height: 70px;
+  max-height: 500px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border-left: 3px;
+  border-left-style: solid;
+  border-left-color: #999;
 }
 
 button {
@@ -48,11 +55,20 @@ button {
   background-color: #000;
   border: 0;
   outline: 0;
+  width: 90px;
+  height: 27px;
 }
 
 #status {
-  margin-bottom: 2rem;
+  margin: 0;
   font-size: 70%;
   display: block;
-  float: left;
+}
+
+#foot {
+  color: #999;
+  margin: 0;
+  margin-bottom: 2.2rem;
+  font-size: 70%;
+  display: block;
 }

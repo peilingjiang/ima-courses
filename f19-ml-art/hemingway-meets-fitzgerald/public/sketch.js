@@ -71,7 +71,6 @@ function onGenerateButton() {
   updateTextUI();
   generateWithInput()
   autoGenerating = true;
-
 }
 
 // Generate new text
@@ -85,7 +84,7 @@ function generate(seed, stateful) {
 
     let data = {
       seed: seed,
-      temperature: 0.42,
+      temperature: 0.45,
       length: 1,
       stateful: stateful,
     };
@@ -98,16 +97,16 @@ function generate(seed, stateful) {
       if(result) {
         // If the result is not a period, add output sample to current text
         var str = result.sample;
-        // var check = str.startsWith(".");
+        var check = str.startsWith(".") || str.startsWith("?") || str.startsWith("\"") || str.startsWith("!");
 
-        // if (check) {
-        //   // console.log("a period!");
-        //   autoGenerating = false;
-        // }
-
-        if (gTextLen >= int(random(50, 150))) {
+        if (check) {
+          // console.log("a period!");
           autoGenerating = false;
         }
+
+        // if (gTextLen >= int(random(300, 500))) {
+        //   autoGenerating = false;
+        // }
 
         currentText += str;
         updateTextUI();

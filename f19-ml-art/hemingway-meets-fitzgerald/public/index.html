@@ -17,21 +17,23 @@
   <p>
     <h1>Hemingway Meets Fitzgerald</h1>
     <p>
-      Starting with the word <input id="textInput" value="He " type="text" />
+      Starting with the word <input id="textInput" value="Sea " type="text" />
     </p><br>
 
     <p>Hemingway wrote:</p>
-    <textarea id="result_h"></textarea>
+    <div id="result_h" contenteditable></div>
     <p>Fitzgerald wrote:</p>
-    <textarea id="result_f"></textarea>
-    <p><strong><em>They</em></strong> wrote:</p>
-    <textarea id="result_hf"></textarea>
+    <div id="result_f" contenteditable></div>
+    <p><strong><em>They</em></strong> might write:</p>
+    <div id="result_hf" contenteditable></div>
     <br>
     <button id="generate">Write</button>
     <button id="reset">Erase</button>
     <br>
     <span id="status">Loading</span>
     <script src="sketch.js"></script>
+    <br>
+    <p id="foot">--<br>Based on p5.js and ml5.js. Thanks to Daniel Shiffman and Ellen Nickles.<br>Peiling Jiang. 2019</p>
 </body>
 
 </html>
