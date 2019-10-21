@@ -30,7 +30,8 @@ input {
   font-size: 110%;
   font-family: rollerscript-smooth, sans-serif;
   margin: 0;
-  margin-bottom: 0.2rem;
+  margin-top: 0.75rem;
+  margin-bottom: 1.2rem;
   margin-left: 0.617rem;
   padding: 0;
   padding-left: 1rem;
@@ -63,6 +64,12 @@ button {
   margin: 0;
   font-size: 70%;
   display: block;
+  font-weight: 700;
+}
+
+p {
+  margin: 0;
+  padding: 0;
 }
 
 #foot {
@@ -71,4 +78,5 @@ button {
   margin-bottom: 2rem;
   font-size: 70%;
   display: block;
+  font-weight: 300;
 }
