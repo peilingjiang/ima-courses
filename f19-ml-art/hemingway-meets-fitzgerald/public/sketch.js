@@ -8,6 +8,7 @@ let textInput;
 let modelIsReady = false
 let runningInference = false;
 let autoGenerating = false;
+let hasGenerated = false;
 
 let hText = '';
 let fText = '';
@@ -104,16 +105,14 @@ function generate(seed, stateful) {
         //   autoGenerating = false;
         // }
 
-        if (gTextLen >= 20) {
+        if (gTextLen >= int(random(50, 150))) {
           autoGenerating = false;
         }
 
         currentText += str;
         updateTextUI();
+        hasGenerated = true;
       }
-      // Update the status log
-      status = 'Ready! '
-      select('#status').html(status);
       runningInference = false;
     }
   }
@@ -123,5 +122,9 @@ function draw() {
   if (modelIsReady && autoGenerating) {
     generateWithChar();
     gTextLen++;
+  } else if (modelReady && hasGenerated && !autoGenerating) {
+    // Update the status log
+    status = 'Ready! '
+    select('#status').html(status);
   }
 }
