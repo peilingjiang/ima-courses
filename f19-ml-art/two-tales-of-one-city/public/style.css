@@ -1,0 +1,122 @@
+html, body {
+  overflow: hidden;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-size: 1rem;
+}
+
+#background_image {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: -100;
+  display: block;
+  background-image: url('assets/bliss.png');
+  background-size: cover;
+  width: 100%;
+  height: 100%;
+  /* -webkit-filter: blur(3px);
+  -moz-filter: blur(3px);
+  -o-filter: blur(3px);
+  -ms-filter: blur(3px);
+  filter: blur(3px); */
+}
+
+.window {
+  position: absolute;
+  height: 600px;
+  width: 800px;
+  background-color: #fff;
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none;
+}
+
+.windowheader {
+  cursor: move;
+  height: 30px;
+  font-size: 14px;
+}
+
+#zh_window {
+  top: 50px;
+  left: 50px;
+  z-index: 1;
+  border: 5px solid #de2910;
+}
+
+#zh_windowheader {
+  padding-top: 8px;
+  padding-left: 15px;
+  z-index: 2;
+  font-family: source-han-sans-simplified-c, sans-serif;
+  font-weight: 300;
+  color: #fff;
+  background-color: #de2910;
+}
+
+#en_window {
+  top: 100px;
+  left: 550px;
+  z-index: 3;
+  border: 5px solid #000;
+}
+
+#en_windowheader {
+  padding-top: 11px;
+  padding-left: 15px;
+  z-index: 4;
+  font-family: Helvetica, sans-serif;
+  font-weight: 500;
+  color: #fff;
+  background-color: #000;
+}
+
+#zh_title {
+  margin: 0;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-family: source-han-sans-simplified-c, sans-serif;
+  font-weight: 900;
+  font-size: 600%;
+  line-height: 120%;
+  color: #000;
+}
+
+#zh_content {
+  padding-left: 20px;
+  padding-right: 20px;
+  font-family: source-han-sans-simplified-c, sans-serif;
+  font-weight: 400;
+  font-size: 100%;
+  color: #333;
+}
+
+#en_title {
+  margin: 0;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-family: Helvetica, sans-serif;
+  font-weight: 800;
+  font-size: 500%;
+  line-height: 120%;
+  color: #000;
+}
+
+#en_content {
+  padding-left: 20px;
+  padding-right: 20px;
+  font-family: Helvetica, sans-serif;
+  font-weight: 400;
+  font-size: 100%;
+  color: #333;
+}
