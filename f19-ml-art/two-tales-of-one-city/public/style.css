@@ -66,7 +66,7 @@ body {
 
 #en_window {
   top: 100px;
-  left: 550px;
+  left: 650px;
   z-index: 3;
   border: 5px solid #000;
 }
@@ -98,6 +98,7 @@ body {
   font-family: source-han-sans-simplified-c, sans-serif;
   font-weight: 400;
   font-size: 100%;
+  line-height: 110%;
   color: #333;
 }
 
@@ -118,5 +119,6 @@ body {
   font-family: Helvetica, sans-serif;
   font-weight: 400;
   font-size: 100%;
+  line-height: 110%;
   color: #333;
 }

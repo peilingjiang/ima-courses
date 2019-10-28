@@ -85,7 +85,7 @@ function get_len(t) {
   } else if (t[0] == 'en' && t[1] == 'name') {
     return int(random(16, 30));
   } else if (t[0] == 'en' && t[1] == 'content') {
-    return int(random(80, 120));
+    return int(random(300, 400));
   }
 }
 
@@ -93,6 +93,6 @@ function get_seed(t) {
   if (t[0] == 'zh') {
     return random(['中国', '香港', '']);
   } else if (t[0] == 'en') {
-    return random(['Hong Kong', 'China', '']);
+    return random(['Hong Kong ', 'China ', '']);
   }
 }
