@@ -2,17 +2,10 @@ let modelCounter = 1; // Count model
 let bg;
 let runningInference = false;
 let generated = false;
+let imgArray;
 
 function preload() {
-  bg = loadImage('assets/bliss.png');
-
-  let imgArray = [];
-  while (imgArray.length < 6) {
-    let im = random(en_images);
-    while (!imgArray.includes(im)) {
-      imgArray.push(im);
-    }
-  }
+  imgArray = en_images;
 }
 
 function setup() {
@@ -21,6 +14,7 @@ function setup() {
   zh_contentRNN = ml5.charRNN('./models/zh_description/', modelReady);
   en_nameRNN = ml5.charRNN('./models/en_name/', modelReady);
   en_contentRNN = ml5.charRNN('./models/en_description/', modelReady);
+  noLoop();
 }
 
 function modelReady() {
@@ -36,7 +30,6 @@ function modelReady() {
 }
 
 function draw() {
-  draw_bg(); // TODO
 
 }
 
@@ -55,7 +48,6 @@ function generate(rnn, type) {
 
   // When it's done
   function gotData(err, result) {
-    console.log(result.sample);
     update_text(type, seed + result.sample);
   }
 }
@@ -65,14 +57,17 @@ function update_text(t, r) {
     if (t[1] == 'name') {
       $("#zh_title").text(r);
     } else {
-      console.log('HERE');
-      $("#zh_content").text(r + "[了解更多]");
+      $("#zh_content").text(r + "......");
+      $("#zh_content").append("&nbsp;&nbsp;<em>[了解更多]</em>");
     }
   } else {
+    let lastSpaceInd = r.lastIndexOf(' ');
+    r = r.substring(0, lastSpaceInd);
     if (t[1] == 'name') {
       $("#en_title").text(r);
     } else {
-      $("#en_content").text(r + "[READ MORE]");
+      $("#en_content").text(r + "...");
+      $("#en_content").append("&nbsp;&nbsp;<em>[READ MORE]</em>")
     }
   }
 }
@@ -83,9 +78,9 @@ function get_len(t) {
   } else if (t[0] == 'zh' && t[1] == 'content') {
     return int(random(150, 250));
   } else if (t[0] == 'en' && t[1] == 'name') {
-    return int(random(16, 30));
+    return int(random(60, 80));
   } else if (t[0] == 'en' && t[1] == 'content') {
-    return int(random(300, 400));
+    return int(random(400, 500));
   }
 }
 

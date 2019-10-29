@@ -30,12 +30,19 @@ function dragElement(elmnt) {
       document.getElementById("zh_windowheader").style.zIndex = "4";
       document.getElementById("en_window").style.zIndex = "1";
       document.getElementById("en_windowheader").style.zIndex = "2";
+      change_bg();
     } else if (e.target.id == 'en_windowheader') {
       document.getElementById("en_window").style.zIndex = "3";
       document.getElementById("en_windowheader").style.zIndex = "4";
       document.getElementById("zh_window").style.zIndex = "1";
       document.getElementById("zh_windowheader").style.zIndex = "2";
+      change_bg();
     }
+  }
+
+  function change_bg() {
+    console.log("url('" + random(imgArray) + "')");
+    $('#background_image').css('background-image', "url('" + random(imgArray) + "')");
   }
 
   function elementDrag(e) {
