@@ -1,5 +1,5 @@
 .vscode/settings.json
-node_modules/*
+node_modules
 *.DS_STORE
 !*.gitkeep
 .idea

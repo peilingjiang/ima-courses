@@ -1,0 +1,22 @@
+/* html, */
+body {
+  height: 100%;
+  /*   font-family: 'Indie Flower', cursive;'Inconsolata', monospace; */
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  /* This centers the sketch horizontally. */
+  justify-content: center;
+  /* This centers the sketch vertically. */
+  align-items: center;
+}
+
+canvas {
+  margin: 0;
+  padding: 0;
+  display: block;
+  /* border-radius: 5px; */
+}
