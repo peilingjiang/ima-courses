@@ -4,11 +4,15 @@ Plant[] plants; // array of Plant objects
 int widCount, highCount, count;
 
 void setup() {
-  size(840, 840);
-
-  r = 24.0;
-  shameThreshold = 45.0;
-  shameToLimit = 70.0; // fully recover only after mouse is _ away
+  size(851, 851);
+  r = 23.0;
+  shameThreshold = 70.0;
+  shameToLimit = 105.0; // fully recover only after mouse is _ away
+  
+  //size(840, 840);
+  //r = 40.0;
+  //shameThreshold = 90.0;
+  //shameToLimit = 110.0; // fully recover only after mouse is _ away
 
   widCount = int((width + 2 * r) / r);
   highCount = int((height + 2 * r) / r); // bleed one on each side
@@ -90,7 +94,7 @@ class Plant {
           toShame = false;
         }
       } else if ( toRecover && (len < r / 2) ) {
-        float rSpeed = random(-0.14, 0.36);
+        float rSpeed = random(-0.15, 0.4);
         len = constrain(len + rSpeed, 0, r / 2);
         if (len >= r / 2) {
           toRecover = false;
