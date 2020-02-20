@@ -21,17 +21,17 @@ adders = set()
 debug = False
 
 disHeight = 5
-birthMode = 1 # 1 or 2
+birthMode = 2 # 1 or 2
 
 def setup():
-    frameRate(100)
-    size(700, 700 + disHeight)
+    frameRate(180)
+    size(800, 800 + disHeight)
     colorMode(RGB)
     noStroke()
     noFill()
     background(0)
     global allPixels
-    for i in range(700):
+    for i in range(500):
         allPixels.add(Pix())
     if debug:
         allPixels.add(Pix(5, 100, 100, 1, 0))
@@ -42,9 +42,9 @@ def draw():
     background(0)
     nowPositions = {}
     # To remove this round, give birth or eaten
-    removals.clear()
+    removals = set()
     # To add this round, emitted
-    adders.clear()
+    adders = set()
     loadPixels()
     
     for p in allPixels:
@@ -54,17 +54,16 @@ def draw():
         else:
             if p.level == nowPositions[tempPosition].level:
                 # Give birth, remove p
-                nowPositions[tempPosition].up()
-                nowPositions[tempPosition].emit(adders)
+                nowPositions[tempPosition].up(True, adders, nowPositions)
                 removals.add(p)
             elif p.level > nowPositions[tempPosition].level:
                 # p up, remove original
-                p.up()
+                p.up(False)
                 removals.add(nowPositions[tempPosition])
                 nowPositions[tempPosition] = p
             else:
                 # original up, remove p
-                nowPositions[tempPosition].up()
+                nowPositions[tempPosition].up(False)
                 removals.add(p)
                 
     allPixels -= removals
@@ -119,23 +118,27 @@ class Pix:
                                                 levelColors[self.level][1],
                                                 levelColors[self.level][2])
     
-    def up(self):
+    def up(self, emit, addSet=None, nP=None):
         self.level += 1
-        if self.level == 7: self.level = 0
-            
-    def emit(self, addSet):
-        if self.level == 0:
+        if self.level == 7:
+            self.level = 0
             return
-        if birthMode == 1:
-            for ix in range(-1, 2):
-                for iy in range(-1, 2):
-                    if ix + iy != 0 or ix * iy != 0:
-                        addSet.add(Pix(self.level - 1,
-                                    self.x + ix, self.y + iy,
-                                    ix, iy))
-        elif birthMode == 2:
-            selectors = speedSelect()
-            addSet.add(Pix(self.level - 1,
-                           self.x + selectors[0], self.y + selectors[1],
-                           selectors[0], selectors[1]))
+        
+        if emit:
+            if self.level == 0:
+                return
+            if birthMode == 1:
+                for ix in range(-1, 2):
+                    for iy in range(-1, 2):
+                        if (ix + iy != 0 or ix * iy != 0) and (self.x + ix, self.y + iy) not in nP:
+                            addSet.add(Pix(self.level - 1,
+                                           self.x + ix, self.y + iy,
+                                           ix, iy))
+            elif birthMode == 2:
+                for rept in range(3):
+                    selectors = speedSelect()
+                    addSet.add(Pix(self.level - 1,
+                                   self.x + selectors[0], self.y + selectors[1],
+                                   selectors[0], selectors[1]))
+        return
                     
