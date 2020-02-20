@@ -20,12 +20,12 @@ adders = set()
 
 debug = False
 
-disHeight = 5
+disHeight = 20
 birthMode = 2 # 1 or 2
 
 def setup():
     frameRate(180)
-    size(800, 800 + disHeight)
+    size(700, 700 + disHeight)
     colorMode(RGB)
     noStroke()
     noFill()
@@ -38,13 +38,16 @@ def setup():
         allPixels.add(Pix(5, 400, 100, -1, 0))
     
 def draw():
-    global allPixels
     background(0)
+    
+    global allPixels
     nowPositions = {}
     # To remove this round, give birth or eaten
     removals = set()
     # To add this round, emitted
     adders = set()
+    cNum = [0, 0, 0, 0, 0, 0, 0]
+    
     loadPixels()
     
     for p in allPixels:
@@ -71,12 +74,20 @@ def draw():
 
     for p in allPixels:
         p.display()
+        cNum[p.level] += 1
         
     updatePixels()
     
-    for c in levelColors:
-        fill(c[0], c[1], c[2])
-        rect(levelColors.index(c) * 100, height - disHeight, 100, disHeight)
+    # Draw level hint
+    cnTotal = 0
+    cumuLen = 0
+    cnTotal = sum(cNum)
+    for c in range(len(levelColors)):
+        fill(levelColors[c][0], levelColors[c][1], levelColors[c][2])
+        cumuLenDelta = width * cNum[c] / cnTotal
+        rect(c * 100, height - disHeight / 2, width / 7, disHeight / 2)
+        rect(cumuLen, height - disHeight, cumuLenDelta, disHeight / 2)
+        cumuLen += cumuLenDelta
     
 def speedSelect():
     tempSelectorX = int(random(3))
