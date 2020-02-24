@@ -1,21 +1,22 @@
 /*
   Peiling Jiang
-  2020
-  Dithering Human
-*/
+ 2020
+ Dithering Human
+ */
 
+int R, G, B, A;
 boolean grey = true;
 
 import processing.video.*;
 Capture ourVideo;
 
+// 
+
 void setup() {
   size(1280, 720);
   ourVideo = new Capture(this, width, height);
   ourVideo.start();
-  if (grey) ourVideo.filter(GRAY);
   noCursor();
-  
 }
 
 int getInd(int x, int y) {
@@ -25,64 +26,62 @@ int getInd(int x, int y) {
 void draw() {
   if (ourVideo.available())
     ourVideo.read();
+  scale(-1, 1);
   background (0);
-  ourVideo.loadPixels();
-  loadPixels();
-  for (int y = 0; y < width; y++) {
-    for (int x = 0; x < width; x++) {
-      // A, R, G, B
-      int[] oldColorArr = PxPGetPixel(x, y, ourVideo.pixels, width);
-      
-      int newR = round(5 * oldColorArr[1] / 255) * 51;
-      int newG = round(5 * oldColorArr[2] / 255) * 51;
-      int newB = round(5 * oldColorArr[3] / 255) * 51;
-      
-      float errR = newR - oldColorArr[1];
-      float errG = newG - oldColorArr[2];
-      float errB = newB - oldColorArr[3];
-      
-      PxPSetPixel(x, y, newR, newG, newB, 255, pixels, width);
-      
-      // 1
-      int[] nowColorArr = PxPGetPixel(x + 1, y, ourVideo.pixels, width);
-      nowColorArr[1] = nowColorArr[1] * 7 / 16;
-      nowColorArr[2] = nowColorArr[2] * 7 / 16;
-      nowColorArr[3] = nowColorArr[3] * 7 / 16;
-      PxPSetPixel(x + 1, y, nowColorArr[1], nowColorArr[2], nowColorArr[3], 255, pixels, width);
-      
-      // 2, x - 1, y + 1
-      nowColorArr = PxPGetPixel(x - 1, y + 1, ourVideo.pixels, width);
-      nowColorArr[1] = nowColorArr[1] * 3 / 16;
-      nowColorArr[2] = nowColorArr[2] * 3 / 16;
-      nowColorArr[3] = nowColorArr[3] * 3 / 16;
-      PxPSetPixel(x - 1, y + 1, nowColorArr[1], nowColorArr[2], nowColorArr[3], 255, pixels, width);
-      
-      // 3, x, y + 1
-      nowColorArr = PxPGetPixel(x, y + 1, ourVideo.pixels, width);
-      nowColorArr[1] = nowColorArr[1] * 5 / 16;
-      nowColorArr[2] = nowColorArr[2] * 5 / 16;
-      nowColorArr[3] = nowColorArr[3] * 5 / 16;
-      PxPSetPixel(x, y + 1, nowColorArr[1], nowColorArr[2], nowColorArr[3], 255, pixels, width);
-      
-      // 4, x + 1, y + 1
-      nowColorArr = PxPGetPixel(x + 1, y + 1, ourVideo.pixels, width);
-      nowColorArr[1] = nowColorArr[1] * 1 / 16;
-      nowColorArr[2] = nowColorArr[2] * 1 / 16;
-      nowColorArr[3] = nowColorArr[3] * 1 / 16;
-      PxPSetPixel(x + 1, y + 1, nowColorArr[1], nowColorArr[2], nowColorArr[3], 255, pixels, width);
-      
+  if (grey) {
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        PxPGetPixel(x, y, ourVideo.pixels, width);
+        int ave = (R + G + B) / 3;
+        PxPSetPixel(x, y, ave, ave, ave, 255, ourVideo.pixels, width);
+      }
     }
   }
-  updatePixels();
-  
+  ourVideo.loadPixels();
+  for (int y = 0; y < height - 1; y++) {
+    for (int x = 1; x < width - 1; x++) {
+      // A, R, G, B
+      PxPGetPixel(x, y, ourVideo.pixels, width);
+
+      int factor = 1;
+
+      int newR = round(factor * R / 255) * (255 / factor);
+      int newG = round(factor * G / 255) * (255 / factor);
+      int newB = round(factor * B / 255) * (255 / factor);
+
+      float errR = R - newR;
+      float errG = G - newG;
+      float errB = B - newB;
+
+      PxPSetPixel(x, y, newR, newG, newB, 255, ourVideo.pixels, width);
+
+      // 1, x + 1, y
+      modifyNeighbours(x + 1, y, errR, errG, errB, 7);
+      // 2, x - 1, y + 1
+      modifyNeighbours(x - 1, y + 1, errR, errG, errB, 3);
+      // 3, x, y + 1
+      modifyNeighbours(x, y + 1, errR, errG, errB, 5);
+      // 4, x + 1, y + 1
+      modifyNeighbours(x + 1, y + 1, errR, errG, errB, 1);
+    }
+  }
+  ourVideo.updatePixels();
+  image(ourVideo, - width, 0);
 }
-      
+
+void modifyNeighbours(int x, int y, float eR, float eG, float eB, int co) {
+  PxPGetPixel(x, y, ourVideo.pixels, width);
+  float finalR = R + eR * co / 16.0;
+  float finalG = G + eG * co / 16.0;
+  float finalB = B + eB * co / 16.0;
+  ourVideo.pixels[getInd(x, y)] = color(finalR, finalG, finalB);
+}
+
 // PxP functions by Daniel Rozin
 // Modified by Peiling Jiang
 
 int[] PxPGetPixel(int x, int y, int[] pixelArray, int pixelsWidth) {
   int thisPixel=pixelArray[x+y*pixelsWidth];
-  int R, G, B, A;
   A = (thisPixel >> 24) & 0xFF;
   R = (thisPixel >> 16) & 0xFF;
   G = (thisPixel >> 8) & 0xFF;
