@@ -1,16 +1,14 @@
 /*
   Peiling Jiang
- 2020
- Dithering Human
- */
+  2020
+  Dithering Human
+*/
 
 int R, G, B, A;
 boolean grey = true;
 
 import processing.video.*;
 Capture ourVideo;
-
-// 
 
 void setup() {
   size(1280, 720);
@@ -27,7 +25,7 @@ void draw() {
   if (ourVideo.available())
     ourVideo.read();
   scale(-1, 1);
-  background (0);
+  background(0);
   if (grey) {
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
