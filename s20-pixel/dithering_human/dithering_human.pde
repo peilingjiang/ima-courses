@@ -1,18 +1,26 @@
 /*
-  Peiling Jiang
- 2020
- Dithering Human
- */
+
+Peiling Jiang
+2020 NYU IMA
+Dithering Human
+
+*/
 
 int R, G, B, A;
 boolean grey = true;
 
+
+// --- CHANGE ---
+int dither = 1; // Default algorithm is 1
+boolean interact = true;
+int ditherMode = 1; // Default  algorithm is 1
+
+
 import processing.video.*;
 Capture ourVideo;
 
-// 
-
 void setup() {
+  frameRate(120);
   size(1280, 720);
   ourVideo = new Capture(this, width, height);
   ourVideo.start();
@@ -24,6 +32,9 @@ int getInd(int x, int y) {
 }
 
 void draw() {
+  if (interact) {
+    dither = floor(map(mouseX, 0, width, 1, 8));
+  }
   if (ourVideo.available())
     ourVideo.read();
   scale(-1, 1);
@@ -38,8 +49,8 @@ void draw() {
     }
   }
   ourVideo.loadPixels();
-  for (int y = 0; y < height - 1; y++) {
-    for (int x = 1; x < width - 1; x++) {
+  for (int y = dither; y < height - dither; y++) {
+    for (int x = dither; x < width - dither; x++) {
       // A, R, G, B
       PxPGetPixel(x, y, ourVideo.pixels, width);
 
@@ -54,15 +65,38 @@ void draw() {
       float errB = B - newB;
 
       PxPSetPixel(x, y, newR, newG, newB, 255, ourVideo.pixels, width);
-
-      // 1, x + 1, y
-      modifyNeighbours(x + 1, y, errR, errG, errB, 7);
-      // 2, x - 1, y + 1
-      modifyNeighbours(x - 1, y + 1, errR, errG, errB, 3);
-      // 3, x, y + 1
-      modifyNeighbours(x, y + 1, errR, errG, errB, 5);
-      // 4, x + 1, y + 1
-      modifyNeighbours(x + 1, y + 1, errR, errG, errB, 1);
+      
+      if (ditherMode == 1) {
+        // 1, x + 1, y
+        modifyNeighbours(x + dither, y         , errR, errG, errB, 7);
+        // 2, x - 1, y + 1
+        modifyNeighbours(x - dither, y + dither, errR, errG, errB, 3);
+        // 3, x, y + 1
+        modifyNeighbours(x         , y + dither, errR, errG, errB, 5);
+        // 4, x + 1, y + 1
+        modifyNeighbours(x + dither, y + dither, errR, errG, errB, 1);
+      
+      } else if (ditherMode == 2) {
+        // Filter OUT BLACK
+        
+        // 1
+        modifyNeighbours(x - dither, y + dither, errR, errG, errB, 7);
+        // 2
+        modifyNeighbours(x - dither, y         , errR, errG, errB, 3);
+        // 3
+        modifyNeighbours(x         , y + dither, errR, errG, errB, 5);
+        // 4
+        modifyNeighbours(x - dither, y         , errR, errG, errB, 1);
+      } else if (ditherMode == 3) {
+        // 1
+        modifyNeighbours(x + dither, y + dither, errR, errG, errB, 10);
+        // 2
+        modifyNeighbours(x + dither, y + dither, errR, errG, errB, 3);
+        // 3
+        modifyNeighbours(x + dither, y + dither, errR, errG, errB, 5);
+        // 4
+        modifyNeighbours(x - dither, y - dither, errR, errG, errB, 1);
+      }
     }
   }
   ourVideo.updatePixels();
