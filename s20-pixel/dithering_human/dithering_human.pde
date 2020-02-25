@@ -38,7 +38,7 @@ void draw() {
   if (ourVideo.available())
     ourVideo.read();
   scale(-1, 1);
-  background (0);
+  background(0);
   if (grey) {
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
