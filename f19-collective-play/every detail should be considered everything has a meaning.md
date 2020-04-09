@@ -1,0 +1,1 @@
+**Every detail should be considered. Everything has a meaning.**
