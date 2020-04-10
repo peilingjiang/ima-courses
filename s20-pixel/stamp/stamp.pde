@@ -30,13 +30,24 @@ void setup() {
   ourVideo = new Capture(this, width, height, videoList[0]); // Get the first camera
   ourVideo.start();
   noStroke();
+  
 }
 
 void draw() {
+  // TODO: Flip video left to right
   // scale(-1, 1);
-  image(ourVideo, 0, 0);
+  
+  loadPixels();
+  for (int x = 0; x < width; x++) {
+    for (int y = 0; y < height; y++) {
+      PxPSetPixel(x, y, 0, 0, 0, 0, pixels, width);
+    }
+  }
+  updatePixels();
+  
   if (ourVideo.available())
     ourVideo.read();
+  image(ourVideo, 0, 0);
   
   ourVideo.loadPixels();
   loadPixels();
@@ -63,6 +74,7 @@ void draw() {
     sources[i].display();
   }
   updatePixels();
+  
   if (viewTime > 0) {
     viewTime -= 1;
     fill(0, 209, 255, 240);
