@@ -87,7 +87,7 @@ let sketch = (s) => {
 
     s.mouseClicked = () => {
         let tempChar = s.random(ALPHABET);
-        if ((pageLang in data) && (tempChar in data[lang])) {
+        if ((pageLang in data) && (tempChar in data[pageLang])) {
             flowers.push(new Flower(s.mouseX, s.mouseY, pageLang, tempChar, s.random(0, 1)));
             flowersNum++;
         }
