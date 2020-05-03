@@ -7,7 +7,7 @@ let pageLang = "en";
 let tuneMode = false;
 
 // en
-let ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split("");
+let ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,!?@#%^&*".split("");
 
 let sketch = (s) => {
     // Parse data from data.json
@@ -24,7 +24,7 @@ let sketch = (s) => {
 
     let c; // Canvas
     let frameRate = 90;
-    let scale = 1; // Scale of drawings on canvas
+    let scale = 2; // Scale of drawings on canvas
     let bloomMode = 2;
 
     let flowers = []; // Array of all flowers
@@ -62,7 +62,12 @@ let sketch = (s) => {
             sliderOffsetY.position(160, 600);
             sliderAngle.position(310, 600);
             sliderHeight.position(460, 600);
+        } else {
+            validateData(pageLang);
         }
+
+        flowers.push(new Flower(s.width / 2, s.height / 2, pageLang, '*', 0.99));
+        flowersNum++;
     }
 
     s.draw = () => {
@@ -212,6 +217,21 @@ let sketch = (s) => {
             this.height = newHeight;
         }
     }
+
+    let validateData = (lang) => {
+        try {
+            if (!(lang in data))
+                throw "Language not in data.";
+            for (let i in data[lang]) {
+                if (data[lang][i].length != 3 || data[lang][i][0].length != 2)
+                    throw i;
+            }
+        } catch (error) {
+            console.error(error);
+            return;
+        }
+        console.log("Check finished.");
+    };
 };
 
 let windowFlowers = new p5(sketch);
