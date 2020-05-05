@@ -4,7 +4,7 @@
 */
 
 let pageLang = "en";
-let tuneMode = false;
+let tuneMode = true;
 
 // en
 let ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,!?@#%^&*".split("");
@@ -66,7 +66,7 @@ let sketch = (s) => {
             validateData(pageLang);
         }
 
-        flowers.push(new Flower(s.width / 2, s.height / 2, pageLang, '*', 0.99));
+        flowers.push(new Flower(s.width / 2, s.height / 2, pageLang, '4', 0.99));
         flowersNum++;
     }
 
