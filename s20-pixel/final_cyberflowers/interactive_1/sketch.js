@@ -6,7 +6,8 @@
 let pageLang = "en";
 
 // en
-let ALPHABET = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789.,!?@#%^&*".split("");
+// let ALPHABET = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789.,!?@#%^&*".split("");
+let ALPHABET = "bdpqMNmnOoQ0ij!?I1LlA7VvPRBKUu23YkXx".split("");
 
 let sketch = (s) => {
     // Parse data from data.json
@@ -14,28 +15,29 @@ let sketch = (s) => {
 
     let c; // Canvas
     let frameRate = 30;
-    let scale = 1.4; // Scale of drawings on canvas
+    let scale = 0.75; // Scale of drawings on canvas
 
     let flowers = []; // Array of all flowers
     let flowersNum = 0;
 
-    let xOffset = 210;
+    let xOffset = 107;
+    let gap;
     let currentInd = 0;
-
-    let nowColor;
 
     var getFile = new XMLHttpRequest();
 
     s.setup = () => {
         c = s.createCanvas(720, 320);
+        gap = (s.width - xOffset * 2) / 3;
         getFile.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
                 data = JSON.parse(this.responseText);
                 console.log("========== data ==========");
-                nowColor = s.random(data.color[8]);
-                flowers.push(new Flower(xOffset, 320 / 2, pageLang, ALPHABET[0], 0.89));
-                flowers.push(new Flower(720 - xOffset, 320 / 2, pageLang, ALPHABET[1], 0.89));
-                flowersNum += 2;
+                flowers.push(new Flower(xOffset, s.height / 2, pageLang, ALPHABET[0], 0.89));
+                flowers.push(new Flower(xOffset + gap, s.height / 2, pageLang, ALPHABET[1], 0.89));
+                flowers.push(new Flower(xOffset + gap * 2, s.height / 2, pageLang, ALPHABET[2], 0.89));
+                flowers.push(new Flower(xOffset + gap * 3, s.height / 2, pageLang, ALPHABET[3], 0.89));
+                flowersNum += 4;
             }
         };
         getFile.open("GET", "data.json", true);
@@ -57,8 +59,10 @@ let sketch = (s) => {
             s.textStyle(s.NORMAL);
             s.textSize(17);
             s.fill(200);
-            s.text(ALPHABET[currentInd], s.width - 50, 30);
-            s.text(ALPHABET[currentInd + 1], s.width - 30, 30);
+            s.text(ALPHABET[currentInd], s.width - 90, 30);
+            s.text(ALPHABET[currentInd + 1], s.width - 70, 30);
+            s.text(ALPHABET[currentInd + 2], s.width - 50, 30);
+            s.text(ALPHABET[currentInd + 3], s.width - 30, 30);
             s.pop();
             for (let i = 0; i < flowersNum; i++)
                 flowers[i].bloom();
@@ -67,12 +71,13 @@ let sketch = (s) => {
 
     s.mouseClicked = () => {
         if (s.mouseX > 0 && s.mouseX < s.width && s.mouseY > 0 && s.mouseY < s.height) {
-            currentInd += 2;
+            currentInd += 4;
             if (currentInd >= ALPHABET.length - 1)
                 currentInd = 0;
-            nowColor = s.random(data.color[8]);
             flowers[0].reset(xOffset, s.height / 2, pageLang, ALPHABET[currentInd], 0.89);
-            flowers[1].reset(s.width - xOffset, s.height / 2, pageLang, ALPHABET[currentInd + 1], 0.89);
+            flowers[1].reset(xOffset + gap, s.height / 2, pageLang, ALPHABET[currentInd + 1], 0.89);
+            flowers[2].reset(xOffset + gap * 2, s.height / 2, pageLang, ALPHABET[currentInd + 2], 0.89);
+            flowers[3].reset(xOffset + gap * 3, s.height / 2, pageLang, ALPHABET[currentInd + 3], 0.89);
         }
     };
 
@@ -91,7 +96,7 @@ let sketch = (s) => {
 
             this.t = 0; // For bloom animation
             this.bloomTime = s.int(0.3 * frameRate * s.map(sentiment, 0, 1, 1.2, 0.8) + s.random(-frameRate / 6, frameRate / 6)); // Total bloom time base 1 sec
-            this.progress = 0;
+            this.progress = 0.5;
 
             /* [offset, angle (in times), height] */
             this.offset = data[lang][char][0]; // Offset of char in flower
@@ -99,55 +104,32 @@ let sketch = (s) => {
             this.height = data[lang][char][2]; // Height in standard size
             this.radiusScale = scale * s.map(s.abs(sentiment - 0.5), 0, 0.5, 9, 18); // Size of flower
 
-            this.baseColor = nowColor;
+            this.baseColor = s.random(data.color[s.floor(sentiment * 10)]);
             this.baseColorSet;
             this.buildBaseColorSet();
         }
 
         buildBaseColorSet() {
             this.baseColorSet = [];
-            for (let i = 0; i < this.angle; i++)
+            for (let i = 0; i < this.angle; i++) {
+                let colorOffset = s.random(-12, 12);
                 this.baseColorSet.push([
-                    s.constrain(this.baseColor[0] + s.random(-17, 17), 0, 255),
-                    s.constrain(this.baseColor[1] + s.random(-17, 17), 0, 255),
-                    s.constrain(this.baseColor[2] + s.random(-17, 17), 0, 255)
+                    s.constrain(this.baseColor[0] + colorOffset + s.random(-2, 2), 0, 255),
+                    s.constrain(this.baseColor[1] + colorOffset + s.random(-2, 2), 0, 255),
+                    s.constrain(this.baseColor[2] + colorOffset + s.random(-2, 2), 0, 255)
                 ]);
+            }
         }
 
         bloom() {
-            if (this.progress >= 1) {
-                this.display();
-                return;
-            }
             // Calc progress
-            this.progress = this.t / this.bloomTime;
+            if (s.mouseY > 0 && s.mouseY <= s.height)
+                this.progress = s.map(s.mouseX, 0, s.width - 30, 0, 1, true);
             // MODE 2
             s.push();
             s.textSize(this.radiusScale * this.height * s.map(this.progress, 0, 1, 0.9, 1));
             s.translate(this.x, this.y);
-            for (let i = 0; i < s.floor(this.angle * this.progress); i++) {
-                s.push();
-                s.fill(
-                    this.baseColorSet[i][0],
-                    this.baseColorSet[i][1],
-                    this.baseColorSet[i][2],
-                    225 - 7 * i
-                );
-                s.rotate(i * 360 / this.angle);
-                s.translate(this.radiusScale * this.offset[0], this.radiusScale * this.offset[1]);
-                s.text(this.char, 0, 0);
-                s.pop();
-            }
-            s.pop();
-
-            this.t++;
-        }
-
-        display() {
-            s.push();
-            s.textSize(this.radiusScale * this.height);
-            s.translate(this.x, this.y);
-            for (let i = 0; i < this.angle; i++) {
+            for (let i = 0; i < s.constrain(s.floor(this.angle * this.progress), 1, this.angle); i++) {
                 s.push();
                 s.fill(
                     this.baseColorSet[i][0],
@@ -179,7 +161,7 @@ let sketch = (s) => {
             this.height = data[newLang][newChar][2];
             this.radiusScale = scale * s.map(s.abs(newSentiment - 0.5), 0, 0.5, 9, 18); // Size of flower
 
-            this.baseColor = nowColor;
+            this.baseColor = s.random(data.color[s.floor(newSentiment * 10)]);
             this.baseColorSet;
             this.buildBaseColorSet();
         }

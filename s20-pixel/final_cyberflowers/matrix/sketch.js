@@ -13,7 +13,7 @@ let sketch = (s) => {
     let data;
 
     let c; // Canvas
-    let frameRate = 60;
+    let frameRate = 30;
     let scale = 0.43; // Scale of drawings on canvas
 
     let flowers = []; // Array of all flowers
@@ -50,6 +50,8 @@ let sketch = (s) => {
         gap = s.int((s.width - 2 * margin) / (colNum - 1));
     }
 
+    let endLoop = false; // If true then no longer loop
+
     s.draw = () => {
         if (sowable) {
             for (let row = 0; row < rowNum; row++) {
@@ -62,8 +64,17 @@ let sketch = (s) => {
         }
         s.background(245);
         if (flowersNum) {
-            for (let i = 0; i < flowersNum; i++)
+            endLoop = true;
+            for (let i = 0; i < flowersNum; i++) {
                 flowers[i].bloom();
+
+                // Check and end loop
+                if (flowers[i].progress < 1)
+                    endLoop = false;
+            }
+
+            if (endLoop)
+                s.noLoop();
         }
     };
 
@@ -157,16 +168,18 @@ let sketch = (s) => {
         }
     }
 
-    let saved = false;
-    let saveCount = 0;
+    // SAVE
+    
+    // let saved = false;
+    // let saveCount = 0;
 
-    s.keyTyped = () => {
-        if (s.key === 's') {
-            saved = !saved;
-            s.saveCanvas(c, "canvas" + saveCount, "png");
-            saveCount++;
-        }
-    };
+    // s.keyTyped = () => {
+    //     if (s.key === 's') {
+    //         saved = !saved;
+    //         s.saveCanvas(c, "canvas" + saveCount, "png");
+    //         saveCount++;
+    //     }
+    // };
 };
 
 let windowFlowers = new p5(sketch);
